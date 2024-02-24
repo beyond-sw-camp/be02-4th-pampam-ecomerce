@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+    environment {
+        dockerhubid = '[DockerHub ID]'
+        dockerhubpw = '[DockerHub PW]'
+    }
+    stages {
+        stage('git clone') {
+                steps {
+                    git branch: '[브랜치명]', url: '[Github 레포지토리 주소]'
+                }
+        }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    dir('be02-3rd-pampam-ecomerce'){
+                        sh 'pwd'
+                        sh 'ls -al'
+                        sh 'rm -rf dist/'
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                dir('be02-3rd-pampam-ecomerce'){
+                    sh 'pwd'
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Archive Dist') {
+            steps {
+                script {
+                    sh 'pwd'
+                    // dist 디렉토리로 이동
+                    dir('dist') {
+                        // tar로 압축
+                        sh 'tar -cvf front.tar ./*'
+                    }
+                    // 기존의 front.tar 제거
+                    sh 'rm -rf ./front.tar'
+                    // 압축 파일을 상위 디렉토리로 이동
+                    sh 'mv dist/front.tar ./'
+                }
+            }
+        }
+        stage('SSH transfer') {
+            steps {
+                sshPublisher(
+                    continueOnError: false,
+                    failOnError: true,
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: "test",
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: "front.tar",
+                                    remoteDirectory: "/usr/share/nginx/html",
+                                    execCommand:
+                                    '''
+                                    shopt -s extglob
+                                    rm -rf /usr/share/nginx/html/!(front.tar)
+                                    tar xvf /usr/share/nginx/html/front.tar -C /usr/share/nginx/html/
+                                    rm -rf front.tar
+                                    systemctl reload nginx
+                                    '''
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }
+        }
+    }
+}
