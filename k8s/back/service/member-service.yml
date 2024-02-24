@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: member-service
+spec:
+  selector:
+    app: [member 파드 이름]
+  ports:
+    - port: [member-service 스프링 부트 포트번호]
+      targetPort: [member-service 스프링 부트 포트번호]
