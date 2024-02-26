@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+    environment {
+        //Docker Hub 아이디와 비밀번호 설정
+        dockerhubid = '[DockerHub ID]'
+        dockerhubpw = '[DockerHub PW]'
+    }
+    stages {
+        stage('git clone') {
+                steps {
+                    // GitHub 저장소에서 코드를 클론합니다.
+                    git branch: '[브랜치명]', url: '[Github 레포지토리 주소]'
+                }
+        }
+        stage('Build') {
+            steps {
+            //email-service 모듈을 package로 빌드
+                dir('./email-service'){
+                    sh '/usr/local/maven/bin/mvn package'
+                    
+                }
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                // Docker 이미지 빌드
+                dir('./email-service') {
+                    sh "docker build -t [Docker 이미지]:1.${BUILD_ID} ."
+                }
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                // Docker Hub에 로그인해서 Docker 이미지를 push
+                sh "docker login -u $dockerhubid -p $dockerhubpw"
+                sh "docker push [Docker 이미지]:1.${BUILD_ID}"
+            }
+        }
+        stage('Send Artifacts Over SSH') {
+            steps {
+                // k8s email-service 매니패스트 파일을 SSH를 통해 전송
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: '[k8s master]',
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: 'email-service/email-deployment.yml',
+                                    removePrefix: 'email-service/',
+                                    remoteDirectory: '/root'
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }
+        }
+        stage('Modify and Apply Deployment') {
+            steps {
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: '[k8s master]',
+                            transfers: [
+                                sshTransfer(
+                                    execCommand: '''
+                                        sed -i 's/VERSION/${BUILD_ID}/g' /root/email-deployment.yml
+                                        kubectl apply -f /root/email-deployment.yml
+                                    '''
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }
+        }
+    }
+}

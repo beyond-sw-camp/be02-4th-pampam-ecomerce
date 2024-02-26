@@ -55,7 +55,7 @@ pipeline {
                     failOnError: true,
                     publishers: [
                         sshPublisherDesc(
-                            configName: "test",
+                            configName: '쿠버네티스마스터',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
