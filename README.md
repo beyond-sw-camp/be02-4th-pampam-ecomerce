@@ -50,11 +50,36 @@
 <details>
     <summary>
 <span style="font-size:150%"> k8s 내부 아키텍처 </span></summary>
+k8s 아키텍처 - 클러스터 구성
+
+Master Node :1대 (192.168.0.205)
+
+Worker Node: 3대 (192.168.0.206), (192.168.0.213), (192.168.0.214)
+
+Node간 Connection을 위해 Calico CNI를 설치
+
+Service 생성시 LoadBalance Type 사용을 위해 Metallb를 설치
 </br>
 
 
 <p align="center">
-<img width="80%" src="./img/back/02. k8s_내부_아키텍처.png">
+<img width="80%" src="./img/back/02. k8s_내부_아키텍처.png"></br>
+서비스 아키텍처
+User는 Load Balancer Service를 통해 Nginx Server에 접속 가능하다.
+
+Nginx Server는 K8S 환경에 설치된 Spring Gateway와 Cluster IP를 통해 연결된다.
+
+Spring Gateway는 Cluster Ip를 통해 Spring Eureka와 연결된다.
+
+설치된 Spring Eureka Pod는 K8S에 설치된 각 Pod의 Cluster IP와 연결되어 Pod의 정보를 수집한다.
+
+이 중에서 Member-Service와 Email-Service 및 Image-Service에서 Email-Service는 Kafka를 통해 Message를 송수신 한다.
+
+또한 Member-Service와 Image-Service는 OpenFeign을 통해 Message를 송수신한다.
+
+Pod들은 FrontEnd Pod를 제외하고는 Cluster IP를 통해 내부에서 연결되고, FrontEnd Pod는 Load Balancer를 통해 외부에서 접근 가능하다.
+
+Data 저장을 위한 Database는 Replication 기능을 통해 Master DB(1대) 와 Slave DB(2대) 로 구성하였다.
 
 </details>
 
@@ -165,7 +190,7 @@ CI/CD는 다음과 같은 장점이 있습니다.
     <summary>최신 코드 깃허브에 푸시</summary>
   
 <p align="center">
-<img width="80%" src="./mp4/pitPush.mp4">
+<img width="80%" src="./gif/gitPush.gif">
 </p>
 
 </details>
@@ -173,7 +198,7 @@ CI/CD는 다음과 같은 장점이 있습니다.
     <summary>무중단 배포 영상</summary>
 
 <p align="center">
-<img width="80%" src="/mp4/nonStop.mp4">
+<img width="80%" src="./gif/nonStop.gif">
 </p>
 
 </details>
@@ -181,7 +206,7 @@ CI/CD는 다음과 같은 장점이 있습니다.
     <summary>슬랙에 알림</summary>
 
 <p align="center">
-<img width="80%" src="/mp4/alram.mp4">
+<img width="80%" src="./gif/alram_1.gif">
 </p>
 
 </details>
