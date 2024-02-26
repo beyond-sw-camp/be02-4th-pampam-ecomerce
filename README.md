@@ -9,12 +9,7 @@
 
 
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
 
 ## ✔️ 기술 스택 
 <br>
@@ -33,11 +28,7 @@
 <img src="https://img.shields.io/badge/webhook-2088FF?style=for-the-badge&logo=webhook&logoColor=white">
 </div>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
 
 
 
@@ -50,10 +41,8 @@
 
 
 
-<br>
-<br>
-<br>
-<br>
+
+
 
 
 ## 🖥️운영 환경 📖(펼쳐주세요)
@@ -70,7 +59,7 @@
 </details>
 
 </br>
-</br>
+
 
 
 <details>
@@ -89,9 +78,7 @@
 
 
 
-<br>
-<br>
-<br>
+
 
 
 ## ✨CI/CD의 필요성 및 시나리오 📖(펼쳐주세요)
@@ -99,28 +86,36 @@
 ## 💡 시나리오
 
 본팀은 MSA Architecture를 활용하여 백엔드를 구성하였다.
+
 각각의 모듈은 서로 다른 GitHub Repository에 저장되어 있다.
+
 총 모듈은 8개로, Backend 관련 Repository는 7개 , Frontend 관련 Repository는 1개로 분할 되어있다.
+
 1. 각각의 Repository에 저장된 코드를 개발자 변경한다.
+
 2. 이후 각각의 Repository에 최신 버전의 코드를 Push한다.
+
 3. Push를 감지한 GitHub Repository는 설정된 WebHook을 통해 Jenkins에 최신 버전의 코드가 Push 됐음에 따른 요청을 보낸다.
+
 4. Jenkins Pipeline에 작성된 절차에 따라 동작이 이뤄진다.
+
+   4-1) Jenkins Server는 연결된 GitHub의 최신 버전의 코드를 Clone한다.
    
-4-1) Jenkins Server는 연결된 GitHub의 최신 버전의 코드를 Clone한다. 
+   4-2) 예를 들어 연결된 GitHub Repository가 Backend라면 mvn package, FrontEnd라면 npm run build를 통해 해당 프로젝트를 Build한다.
+   
+   4-3) Build를 통해 생긴 jar 또는 dist 파일을 Dockerfile에 지정된 동작 순서로 Docker image를 생성한다.
+   
+   4-4) 생성된 Docker image를 Docker hub에 Push하기 위해 Docker hub에 Login 한다.
+   
+   4-5) 이후 Jenkins Server에서 등록 및 지정된 K8S Master Node에 배포에 쓰일 Deployment.yml을 전송한다.
+   
+   4-6) 수신한 K8S Master에서 전달 받은 Deployment.yml 파일들을 kubectl apply 명령어를 통해 적용시킨다.
+   
+   4-7) 작성한 Pipeline의 단계별 실행 결과를 Jenkins Server에서 설치된 Slack Plugin을 통해 Slack에 전송한다.
 
-4-2) 예를 들어 연결된 GitHub Repository가 Backend라면 mvn package, FrontEnd라면 npm run build를 통해 해당 프로젝트를 Build한다. 
-
-4-3) Build를 통해 생긴 jar 또는 dist 파일을 Dockerfile에 지정된 동작 순서로 Docker image를 생성한다. 
-
-4-4) 생성된 Docker image를 Docker hub에 Push하기 위해 Docker hub에 Login 한다. 
-
-4-5) 이후 Jenkins Server에서 등록 및 지정된 K8S Master Node에 배포에 쓰일 Deployment.yml을 전송한다. 
-
-4-6) 수신한 K8S Master에서 전달 받은 Deployment.yml 파일들을 kubectl apply 명령어를 통해 적용시킨다. 
-
-4-7) 작성한  Pipeline의 단계별 실행 결과를 Jenkins Server에서 설치된 Slack Plugin을 통해 Slack에 전송한다.
-5. Rolling Update 방식을 통해 Backend의 무중단 배포를 구현했다.
-   FrontEnd는 Nginx의 reload 명령어를 통해 무중단 배포를 구현했다. 최신 버전의 html 파일은 reload 명령어를 통해 DownTime 없이 최신 버전의 코드를 적용하여 FrontServer를 동기화 할 수 있다.
+5-1) Rolling Update 방식을 통해 Backend의 무중단 배포를 구현했다.
+     
+5-2) FrontEnd는 Nginx의 reload 명령어를 통해 무중단 배포를 구현했다. 최신 버전의 html 파일은 reload 명령어를 통해 DownTime 없이 최신 버전의 코드를 적용하여 FrontServer를 동기화 할 수 있다.
 
 
 
@@ -164,56 +159,6 @@ CI/CD는 다음과 같은 장점이 있습니다.
 
 </br>
 
-<details>
-    <summary>
-<span style="font-size:150%"> 모니터링 시스템을 사용한 이유 </span></summary>
-</br>
-
-* 장애 대처를 위한 모니터링 시스템을 도입한 이유는 서비스를 운영하면서 여러 가지 측면에서 발생하는 문제점을 사전에 식별하고 이를 해결하고자 사용하였습니다.
-
-
-* 우선, 모니터링 시스템 없이 서비스를 운영하게 되면 사용자가 직접 에러를 보고해야 한다는 점은 문제의 근본이 되었습니다. 
-
-
-* 이로 인해 시스템에 문제가 발생하더라도 사용자의 수동적인 보고에 의존해야 했으며, 이는 능동적이고 신속한 대응을 어렵게 만들었습니다.
-
-
-* 또한, MSA 환경을 구축하면서 여러 대의 서버를 동시에 운영하게 되면서 시스템 복잡성가 증가하였습니다. 
-
-
-* 이러한 MSA의 복잡한 구성 방식을 보다 효율적으로 관리하고, 문제가 되는 부분을 사전에 식별하여 대처할 수 있도록 모니터링 시스템의 도입이 필요하게 되었습니다.
-
-</details>
-
-</br>
-
-<details>
-    <summary>
-<span style="font-size:150%"> Prometheus 및 Grafana를 사용한 이유 </span></summary>
-</br>
-
-* 저희 서비스를 모니터링해줄 시스템으로는 Prometheus와 Grafana를 채택하였습니다.
-
-
-* 저희 서비스에서는 Kubernetes를 사용하여 시스템을 관리하고 있기 때문에 Kubernetes와의 호환성이 좋은 모니터링 시스템을 선택하고자 했습니다. 
-
-
-* Prometheus는 Kubernetes와의 통합이 용이하며, 설치 및 운영이 간편하여 IT 인프라의 모니터링과 관리를 단순화할 수 있기 때문에 사용하였습니다. 
-
-
-* 또한, 헬름 차트를 통해 기본 구성 요소 설치부터 모니터링 대시보드를 간편하게 관리할 수 있습니다. 이를 활용하여 효율적인 서비스 운영과 빠른 장애 대응이 가능해졌습니다.
-
-
-* Prometheus에 더하여 Grafana를 사용한 이유는 보다 가시성있는 대시보드를 제공하기 때문입니다.
-
-
-* Prometheus를 통해 얻을 수 있는 여러 가지 데이터를 개발자가 Grafana에서 제공하는 대시보드를 통해 데이터를 시각화할 수 있게 되고, 필요에 따라서 직접 대시보드를 제작할 수 있기 때문에 Grafana를 함께 채택하여 사용하였습니다.
-
-</details>
-<br>
-<br>
-<br>
-<br>
 
 ## 🎥CI/CD 테스트 및 결과 📖(펼쳐주세요)
 <details>
@@ -257,9 +202,7 @@ CI/CD는 다음과 같은 장점이 있습니다.
 
 </details>
 <br>
-<br>
-<br>
-<br>
+
 
 ## 🧑‍🤝‍🧑 팀원
 
