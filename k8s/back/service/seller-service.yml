@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: seller-service
+spec:
+  selector:
+    app: seller-app
+  ports:
+    - port: 7011
+      targetPort: 7011
