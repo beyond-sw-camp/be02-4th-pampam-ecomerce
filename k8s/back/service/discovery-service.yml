@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka-service
+spec:
+  selector:
+    app: [eureka 파드 이름]
+  ports:
+    - port: [스프링 부트 유레카 포트 번호]
+      targetPort: [스프링 부트 유레카 포트 번호]
