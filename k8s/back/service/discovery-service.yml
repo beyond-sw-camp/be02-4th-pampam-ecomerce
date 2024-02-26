@@ -4,7 +4,7 @@ metadata:
   name: eureka-service
 spec:
   selector:
-    app: [eureka 파드 이름]
+    app: discovery-app
   ports:
-    - port: [스프링 부트 유레카 포트 번호]
-      targetPort: [스프링 부트 유레카 포트 번호]
+    - port: 6060
+      targetPort: 6060

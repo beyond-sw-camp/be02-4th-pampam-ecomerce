@@ -4,7 +4,7 @@ metadata:
   name: pampam-service
 spec:
   selector:
-    app: [pampam 파드 이름]
+    app: pampam-service-app
   ports:
-    - port: [pampam-service 스프링 부트 포트번호]
-      targetPort: [pampam-service 스프링 부트 포트번호]
+    - port: 8080
+      targetPort: 8080

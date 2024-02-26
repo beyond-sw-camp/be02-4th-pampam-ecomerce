@@ -4,7 +4,7 @@ metadata:
   name: member-service
 spec:
   selector:
-    app: [member 파드 이름]
+    app: member-app
   ports:
-    - port: [member-service 스프링 부트 포트번호]
-      targetPort: [member-service 스프링 부트 포트번호]
+    - port: 7010
+      targetPort: 7010

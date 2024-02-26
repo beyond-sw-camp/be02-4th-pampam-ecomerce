@@ -1,33 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pampam-service-deployment
+  name: front-deployment
 spec:
   selector:
     matchLabels:
-      type: pampam-service-app
+      type: front-app
   replicas: 2
   strategy:
-    type: RollingUpdate       # 무중단 배포 방식
+    type: RollingUpdate
   minReadySeconds: 10
   template:
     metadata:
       labels:
-        type: pampam-service-app
+        type: front-app
     spec:
       containers:
-        - name: pampam-service-container
+        - name: front-container
           image: [도커_이미지_이름]
-          envFrom:
-            - configMapRef:
-                name: cm-pampam-service
           readlinessProbe:
             httpGet:
-              path: /product/connect
-              port: 8080
+              path: /
+              port: 80
             initialDelaySeconds: 5    # 최초 Probe전의 지연 시간
             periodSeconds: 2          # Probe를 체크하는 시간 간격
             successThreshold: 3       # 성공 결과 수신 횟수
           ports:
-            - containerPort: 8080
-      terminationGracePeriodSeconds: 10   # 컨테이너가 강제 종료되기 전의 유예시간
+            - containerPort: 80
+      terminationGracePeriodSeconds: 5

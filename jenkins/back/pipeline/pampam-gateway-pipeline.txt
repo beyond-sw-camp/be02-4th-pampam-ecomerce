@@ -9,7 +9,7 @@ pipeline {
         stage('git clone') {
                 steps {
                     // GitHub 저장소에서 코드를 클론합니다.
-                    git branch: '[브랜치명]', url: '[Github 레포지토리 주소]'
+                    git branch: 'main', url: '[Github 레포지토리 주소]'
                 }
         }
         stage('Build') {
@@ -41,7 +41,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: '[k8s master]',
+                            configName: 'master',
                             transfers: [
                                 sshTransfer(
                                     sourceFiles: 'gateway-service/gateway-deployment.yml',
@@ -59,7 +59,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: '[k8s master]',
+                            configName: 'master',
                             transfers: [
                                 sshTransfer(
                                     execCommand: '''

@@ -9,7 +9,7 @@ pipeline {
         stage('git clone') {
                 steps {
                     // GitHub 저장소에서 코드를 클론합니다.
-                    git branch: '[브랜치명]', url: '[Github 레포지토리 주소]'
+                    git branch: 'main', url: '[Github 레포지토리 주소]'
                 }
         }
         stage('Install Dependencies') {
@@ -55,7 +55,7 @@ pipeline {
                     failOnError: true,
                     publishers: [
                         sshPublisherDesc(
-                            configName: '쿠버네티스마스터',
+                            configName: 'master',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
