@@ -7,22 +7,7 @@
 <br>
 <br>
 
-## 🧑‍🤝‍🧑 팀원
 
-🐯 **정동섭** 🐶 **박현범** 🐺 **양호신** 🐱 **백송연** 🐧 **김도현**
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://github.com/Hosae0905"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/71e60cdb-cc1c-4f25-829c-9e6e33d4fd8c" width="100px;" alt=""/><br /><sub><b> 팀장 : 양호신</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/JungDongSeob"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/d6210ade-6e08-4f1a-a893-a96e064a7c8f" width="100px;" alt=""/><br /><sub><b> 팀원 : 정동섭</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/ParkHyeonBeom"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/852c7c08-43c8-4aba-bb02-894ad52f7daa" width="100px;" alt=""/><br /><sub><b> 팀원 : 박현범</b></sub></a><br /></td>
-     <tr/>
-      <td align="center"><a href="https://github.com/SongYeonBaek"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/7db0d8e5-d406-46f3-9164-aa7b23b9a69f" width="100px;" alt=""/><br /><sub><b> 팀원 : 백송연</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/dohyun0408"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/262aa149-cebf-4e86-a422-29ed9349d745" width="100px;" alt=""/><br /><sub><b> 팀원 : 김도현 </b></sub></a><br /></td>
-    </tr>
-  </tbody>
-</table>
 
 <br>
 <br>
@@ -73,6 +58,20 @@
 
 ## 🖥️운영 환경 📖(펼쳐주세요)
 
+<details>
+    <summary>
+<span style="font-size:150%"> k8s 내부 아키텍처 </span></summary>
+</br>
+
+
+<p align="center">
+<img width="80%" src="./img/back/02. k8s_내부_아키텍처.png">
+
+</details>
+
+</br>
+</br>
+
 
 <details>
     <summary>
@@ -85,19 +84,8 @@
 
 </details>
 
-</br>
-</br>
-
-<details>
-    <summary>
-<span style="font-size:150%"> k8s 내부 아키텍처 </span></summary>
-</br>
 
 
-<p align="center">
-<img width="80%" src="./img/back/02. k8s_내부_아키텍처.png">
-
-</details>
 
 
 
@@ -106,7 +94,36 @@
 <br>
 
 
-## ✨CI/CD의 필요성 📖(펼쳐주세요)
+## ✨CI/CD의 필요성 및 시나리오 📖(펼쳐주세요)
+
+## 💡 시나리오
+
+본팀은 MSA Architecture를 활용하여 백엔드를 구성하였다.
+각각의 모듈은 서로 다른 GitHub Repository에 저장되어 있다.
+총 모듈은 8개로, Backend 관련 Repository는 7개 , Frontend 관련 Repository는 1개로 분할 되어있다.
+1. 각각의 Repository에 저장된 코드를 개발자 변경한다.
+2. 이후 각각의 Repository에 최신 버전의 코드를 Push한다.
+3. Push를 감지한 GitHub Repository는 설정된 WebHook을 통해 Jenkins에 최신 버전의 코드가 Push 됐음에 따른 요청을 보낸다.
+4. Jenkins Pipeline에 작성된 절차에 따라 동작이 이뤄진다.
+   
+4-1) Jenkins Server는 연결된 GitHub의 최신 버전의 코드를 Clone한다. 
+
+4-2) 예를 들어 연결된 GitHub Repository가 Backend라면 mvn package, FrontEnd라면 npm run build를 통해 해당 프로젝트를 Build한다. 
+
+4-3) Build를 통해 생긴 jar 또는 dist 파일을 Dockerfile에 지정된 동작 순서로 Docker image를 생성한다. 
+
+4-4) 생성된 Docker image를 Docker hub에 Push하기 위해 Docker hub에 Login 한다. 
+
+4-5) 이후 Jenkins Server에서 등록 및 지정된 K8S Master Node에 배포에 쓰일 Deployment.yml을 전송한다. 
+
+4-6) 수신한 K8S Master에서 전달 받은 Deployment.yml 파일들을 kubectl apply 명령어를 통해 적용시킨다. 
+
+4-7) 작성한  Pipeline의 단계별 실행 결과를 Jenkins Server에서 설치된 Slack Plugin을 통해 Slack에 전송한다.
+5. Rolling Update 방식을 통해 Backend의 무중단 배포를 구현했다.
+   FrontEnd는 Nginx의 reload 명령어를 통해 무중단 배포를 구현했다. 최신 버전의 html 파일은 reload 명령어를 통해 DownTime 없이 최신 버전의 코드를 적용하여 FrontServer를 동기화 할 수 있다.
+
+
+
 
 <details>
     <summary>
@@ -121,27 +138,13 @@ CI/CD는 다음과 같은 장점이 있습니다.
 
 </br>
 
-<details>
-    <summary>
-<span style="font-size:150%"> 우리 팀이 무중단 배포를 선택한 이유 </span></summary>
-</br>
-무중단 배포를 선택하는 이유는 다음과 같습니다.</br> 
-
-* **사용자들이 서비스를 계속 이용할 수 있도록 보장하기 위함입니다.**</br>
-- 중단 배포를 통해 서비스를 제공할 경우 새로운 버전을 배포하기 위해 이전 버전의 프로세스를 종료하고 새로운 버전을 시작해야 하는데, 이 때 사용자들은 일시적으로 서비스에 접근할 수 없게 됩니다. 
-* 특히 선착순으로 이루어지는 공동구매서비스를 제공하는 우리 서비스의 경우, 중단되는 시간에 사용자들이 원하는 거래를 완료하지 못할 수 있어 치명적인 문제가 발생할 수 있기에 무중단 배포를 선택하게 되었습니다.
-
-</details>
-<br>
-
-
 
 <details>
     <summary>
 <span style="font-size:150%"> Rolling Update 배포 방식 선택 이유 </span></summary>
 </br>
 
-* 중단 배포의 종류로는 Rolling Update, Blue-Green, Canary 배포가 있습니다. 3가지 방법 중에서 Rolling Update를 선택하였는데, 이 배포 방식에 대해 먼저 설명하겠습니다.
+* 무중단 배포의 종류로는 Rolling Update, Blue-Green, Canary 배포가 있습니다. 3가지 방법 중에서 Rolling Update를 선택하였는데, 이 배포 방식에 대해 먼저 설명하겠습니다.
 
 
 * Rolling Update 방식은 V1파드가 존재할 때 V2 파드를 하나 늘리고 V1 파드를 하나 줄이고 이를 반복하여 버전을 구버전에서 신버전으로 점진적으로 교체하는 방법입니다. 
@@ -257,8 +260,24 @@ CI/CD는 다음과 같은 장점이 있습니다.
 <br>
 <br>
 <br>
-<br>
-<br>
+
+## 🧑‍🤝‍🧑 팀원
+
+🐯 **정동섭** 🐶 **박현범** 🐺 **양호신** 🐱 **백송연** 🐧 **김도현**
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/Hosae0905"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/71e60cdb-cc1c-4f25-829c-9e6e33d4fd8c" width="100px;" alt=""/><br /><sub><b> 팀장 : 양호신</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/JungDongSeob"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/d6210ade-6e08-4f1a-a893-a96e064a7c8f" width="100px;" alt=""/><br /><sub><b> 팀원 : 정동섭</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/ParkHyeonBeom"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/852c7c08-43c8-4aba-bb02-894ad52f7daa" width="100px;" alt=""/><br /><sub><b> 팀원 : 박현범</b></sub></a><br /></td>
+     <tr/>
+      <td align="center"><a href="https://github.com/SongYeonBaek"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/7db0d8e5-d406-46f3-9164-aa7b23b9a69f" width="100px;" alt=""/><br /><sub><b> 팀원 : 백송연</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/dohyun0408"><img src="https://github.com/beyond-sw-camp/be02-2nd-pampam-ecomerce/assets/80888180/262aa149-cebf-4e86-a422-29ed9349d745" width="100px;" alt=""/><br /><sub><b> 팀원 : 김도현 </b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## 🌽 [팜팜 사이트 바로가기]<br>
 (http://www.localfoodpam.kro.kr/)
