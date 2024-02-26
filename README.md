@@ -162,42 +162,26 @@ CI/CD는 다음과 같은 장점이 있습니다.
 
 ## 🎥CI/CD 테스트 및 결과 📖(펼쳐주세요)
 <details>
-    <summary>CI/CD 테스트 및 결과</summary>
+    <summary>최신 코드 깃허브에 푸시</summary>
   
 <p align="center">
-<img width="80%" src="#">
+<img width="80%" src="./mp4/pitPush.mp4">
 </p>
 
 </details>
 <details>
-    <summary>2</summary>
+    <summary>무중단 배포 영상</summary>
 
 <p align="center">
-<img width="80%" src="#">TEST
+<img width="80%" src="/mp4/nonStop.mp4">
 </p>
 
 </details>
 <details>
-    <summary>3</summary>
+    <summary>슬랙에 알림</summary>
 
 <p align="center">
-<img width="80%" src="#">TEST
-</p>
-
-</details>
-<details>
-    <summary>4</summary>
-
-<p align="center">
-<img width="80%" src="#">TEST
-</p>
-
-</details>
-<details>
-    <summary>5</summary>
-
-<p align="center">
-<img width="80%" src="#">TEST
+<img width="80%" src="/mp4/alram.mp4">
 </p>
 
 </details>
