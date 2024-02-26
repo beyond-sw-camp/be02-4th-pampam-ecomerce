@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pampam-service
+spec:
+  selector:
+    app: [pampam 파드 이름]
+  ports:
+    - port: [pampam-service 스프링 부트 포트번호]
+      targetPort: [pampam-service 스프링 부트 포트번호]
