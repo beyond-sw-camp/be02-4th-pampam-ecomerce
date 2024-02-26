@@ -4,7 +4,7 @@ metadata:
   name: image-service
 spec:
   selector:
-    app: [image 파드 이름]
+    app: image-app
   ports:
-    - port: [스프링 부트 이미지 포트 번호]
-      targetPort: [스프링 부트 이미지 포트 번호]
+    - port: 7030
+      targetPort: 7030

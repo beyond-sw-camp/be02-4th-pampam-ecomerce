@@ -4,7 +4,7 @@ metadata:
   name: seller-service
 spec:
   selector:
-    app: [seller 파드 이름]
+    app: seller-app
   ports:
-    - port: [스프링 부트 seller 포트 번호]
-      targetPort: [스프링 부트 seller 포트 번호]
+    - port: 7011
+      targetPort: 7011

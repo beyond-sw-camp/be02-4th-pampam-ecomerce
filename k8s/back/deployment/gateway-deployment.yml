@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      type: [deployment_이름]
+      type: gateway-app
   replicas: 2
   strategy:
     type: RollingUpdate       # 무중단 배포 방식
@@ -13,18 +13,21 @@ spec:
   template:
     metadata:
       labels:
-        type: [deployment_이름]
+        type: gateway-app
     spec:
       containers:
-        - name: [컨테이너_이름]
+        - name: gateway-container
           image: [도커_이미지_이름]
+          envFrom:
+            - configMapRef:
+                name: cm-gateway
           readlinessProbe:
             httpGet:
-              path: [http_요청_url]
-              port: [포트번호]
+              path: /gateway/connect
+              port: 7070
             initialDelaySeconds: 5    # 최초 Probe전의 지연 시간
             periodSeconds: 2          # Probe를 체크하는 시간 간격
             successThreshold: 3       # 성공 결과 수신 횟수
           ports:
-            - containerPort: [컨테이너_포트번호]
+            - containerPort: 7070
       terminationGracePeriodSeconds: 10   # 컨테이너가 강제 종료되기 전의 유예시간

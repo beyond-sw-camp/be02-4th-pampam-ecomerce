@@ -4,7 +4,7 @@ metadata:
   name: email-service
 spec:
   selector:
-    app: [email 파드 이름]
+    app: email-app
   ports:
-    - port: [스프링 부트 이메일 포트 번호]
-      targetPort: [스프링 부트 이메일 포트 번호]
+    - port: 7020
+      targetPort: 7020

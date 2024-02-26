@@ -4,7 +4,7 @@ metadata:
   name: front-service
 spec:
   selector:
-    app: [frontend 파드 이름]
+    app: front-app
   ports:
     - port: 80
       targetPort: 80
