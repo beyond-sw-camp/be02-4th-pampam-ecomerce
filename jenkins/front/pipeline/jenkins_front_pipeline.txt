@@ -15,7 +15,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    dir('be02-3rd-pampam-ecomerce'){
+                    dir('clone해서 받아온 디렉터리'){
                         sh 'pwd'
                         sh 'ls -al'
                         sh 'rm -rf dist/'
@@ -26,10 +26,25 @@ pipeline {
         }
         stage('Build') {
             steps {
-                dir('be02-3rd-pampam-ecomerce'){
+                dir('clone해서 받아온 디렉터리'){
                     sh 'pwd'
                     sh 'npm run build'
                 }
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                // Docker 이미지 빌드
+                dir('/var/lib/jenkins/workspace/docker-container-frontend-pipeline') {
+                   sh "docker build -t [Docker 이미지]:1.${BUILD_ID} ."
+                }
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                // Docker 이미지를 Docker Hub에 푸시
+                sh "docker login -u $dockerhubid -p $dockerhubpw"
+                sh "docker build -t [Docker 이미지]:1.${BUILD_ID} ."
             }
         }
         stage('Archive Dist') {
@@ -55,7 +70,7 @@ pipeline {
                     failOnError: true,
                     publishers: [
                         sshPublisherDesc(
-                            configName: "test",
+                            configName: '[k8s master]',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
